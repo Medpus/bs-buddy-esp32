@@ -12,12 +12,12 @@ BS-Buddy reads from the standard Nightscout REST API. You need two things in
 ## Token (recommended)
 
 If your site is locked down (`AUTH_DEFAULT_ROLES=denied`), create a **read-only**
-access token — don't use your `API_SECRET`:
+access token (don't use your `API_SECRET`):
 
 1. Open your Nightscout site → hamburger menu → **Admin Tools**.
 2. Under **Subjects**, click **Add new Subject**.
 3. Name it e.g. `bsbuddy`, set **Roles** to `readable`, **Save**.
-4. Copy the generated token — it looks like `bsbuddy-1a2b3c4d5e6f7a8b`.
+4. Copy the generated token; it looks like `bsbuddy-1a2b3c4d5e6f7a8b`.
 5. Paste it into `secrets.h`:
    ```c
    #define NS_TOKEN "bsbuddy-1a2b3c4d5e6f7a8b"
@@ -30,7 +30,7 @@ If your site is public (`AUTH_DEFAULT_ROLES=readable`), you can leave
 
 `GET {NS_URL}/api/v1/entries.json?count={N}&token={NS_TOKEN}`
 
-`N` is `BSB_HISTORY_N` — enough recent readings (~5 min apart) to draw the bottom
+`N` is `BSB_HISTORY_N`, enough recent readings (~5 min apart) to draw the bottom
 sparkline. From the response (newest-first):
 
 - The **latest** entry is the current value. `sgv` is always in **mg/dL** →

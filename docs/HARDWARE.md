@@ -1,23 +1,23 @@
-# Hardware — Guition JC3248W535 (reference board)
+# Hardware: Guition JC3248W535 (reference board)
 
 A 3.5″ all-in-one ESP32-S3 module. No external wiring is needed; this page
 documents the on-board pin map and the gotchas that matter for firmware.
 
 > This is the **reference board**. Its firmware pin/geometry defines live in
 > [`src/board/jc3248w535/pins.h`](../src/board/jc3248w535/pins.h). Other boards
-> have their own `src/board/<board>/` directory and README — to add one, see
+> have their own `src/board/<board>/` directory and README. To add one, see
 > [`ADDING_A_BOARD.md`](ADDING_A_BOARD.md).
 
 ## Module
 
-- **MCU:** ESP32-S3-WROOM-1 **N16R8** — 16 MB QIO flash + **8 MB OCTAL (OPI) PSRAM**
+- **MCU:** ESP32-S3-WROOM-1 **N16R8**: 16 MB QIO flash + **8 MB OCTAL (OPI) PSRAM**
 - **Display controller:** **AXS15231B** (also integrates the capacitive touch)
 - **Display:** 320×480 IPS, RGB565, driven over **QSPI @ 40 MHz**
 - **Touch:** AXS15231B capacitive, I²C @ 400 kHz, address `0x3B`
 - **USB:** native ESP32-S3 USB (no UART bridge), VID:PID `303A:1001`
 
-Sold as JC3248W535 / JC3248W535C / JC3248W535EN — electrically equivalent for
-the display bus; touch INT/RST wiring can differ between revisions (see below).
+Sold as JC3248W535 / JC3248W535C / JC3248W535EN. They're electrically equivalent
+for the display bus, but touch INT/RST wiring can differ between revisions (see below).
 
 ## Pin map
 
@@ -31,7 +31,7 @@ the display bus; touch INT/RST wiring can differ between revisions (see below).
 | D1    | 48 |
 | D2    | 40 |
 | D3    | 39 |
-| RST   | — (none; software reset over QSPI) |
+| RST   | none (software reset over QSPI) |
 | TE    | 38 (optional anti-tearing) |
 | Backlight | 1 (active **HIGH**, PWM-capable) |
 
@@ -43,8 +43,8 @@ the display bus; touch INT/RST wiring can differ between revisions (see below).
 |---|---|
 | SDA | 4 |
 | SCL | 8  *(shared with the panel's unused DC line)* |
-| INT | **disputed** — 3, 11, or unused depending on board revision |
-| RST | **disputed** — 12 or unused |
+| INT | **disputed**: 3, 11, or unused depending on board revision |
+| RST | **disputed**: 12 or unused |
 | Addr | `0x3B` |
 
 This firmware **polls** touch over I²C, so the INT/RST disagreement doesn't
@@ -60,7 +60,7 @@ matter. If you want interrupt-driven touch, confirm the INT pin on *your* unit.
    Rotate in **software** via the `Arduino_Canvas` rotation argument (we use `1`
    for landscape 480×320).
 3. **Color byte order:** with `Arduino_Canvas` + `draw16bitRGBBitmap`, do **not**
-   also call `lv_draw_sw_rgb565_swap` — that double-swaps and gives wrong colors.
+   also call `lv_draw_sw_rgb565_swap`; that double-swaps and gives wrong colors.
 4. **Don't repurpose GPIO8.** It's the touch I²C SCL; in QSPI mode the panel DC is
    unused (`dc = -1`) so the pin only serves touch.
 5. **Native USB only.** No CH340/CP2102. The port is `303A:1001`; flashing uses
