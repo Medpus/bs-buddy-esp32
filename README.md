@@ -20,7 +20,7 @@ ESP32 screens can be added too. See [Supported boards](#supported-boards).
 - A **trend arrow** for which way it's heading
 - The **change** since the last reading (`+0.3`) and **how long ago** it was
 - A **sparkline** of recent readings, with dashed lines marking your low/high targets
-- A **clock**, plus an `ingen nett` warning if the connection drops
+- A **clock**, plus an **offline warning** if the connection drops
 - **Tap the screen** to dim or turn off the backlight
 
 It also fades the value when a reading goes stale, reconnects WiFi on its own, and
