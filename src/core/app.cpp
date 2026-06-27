@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "strings.h"
 #include "glucose.h"
 #include "viewmodel.h"
 #include "net.h"
@@ -38,17 +39,17 @@ static void show_status(const char *msg) {
 }
 
 void app_init() {
-  show_status("Kobler til WiFi...");
+  show_status(BSB_TXT_WIFI_CONNECT);
 
   if (wifi_begin()) {
     Serial.printf("[wifi] connected, IP=%s RSSI=%d\n",
                   WiFi.localIP().toString().c_str(), WiFi.RSSI());
-    show_status("Synkroniserer tid...");
+    show_status(BSB_TXT_TIME_SYNC);
     ns_time_begin();
-    show_status("Henter glukose...");
+    show_status(BSB_TXT_FETCHING);
   } else {
     Serial.println("[wifi] connection FAILED");
-    show_status("WiFi feilet");
+    show_status(BSB_TXT_WIFI_FAILED);
   }
 
   g_lastPoll = millis() - BSB_POLL_INTERVAL_MS;   // force an immediate first poll
@@ -77,7 +78,7 @@ void app_tick(uint32_t now) {
 
     // Before the first reading, keep the user informed on the status screen.
     if (!g_reading.valid) {
-      show_status(wifi_connected() ? "Venter på data" : "WiFi frakoblet");
+      show_status(wifi_connected() ? BSB_TXT_WAITING : BSB_TXT_WIFI_OFFLINE);
     }
   }
 

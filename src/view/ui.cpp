@@ -5,6 +5,7 @@
 #include <lvgl.h>
 #include "fonts.h"
 #include "config.h"
+#include "strings.h"
 
 #define COL_BG      0x000000
 #define COL_MUTED   0x8E8E93
@@ -101,7 +102,7 @@ void ui_build(const BoardInfo &board) {
   lv_obj_align(lblClock, LV_ALIGN_TOP_RIGHT, -16, 8);
 
   lblConn = make_label(scr, &font_text, COL_WARN);
-  lv_label_set_text(lblConn, "ingen nett");
+  lv_label_set_text(lblConn, BSB_TXT_NO_NET);
   lv_obj_align(lblConn, LV_ALIGN_TOP_LEFT, 16, 8);
   hide(lblConn, true);
 
@@ -150,7 +151,7 @@ void ui_build(const BoardInfo &board) {
 
   // Centered status message
   lblStatus = make_label(scr, &font_text, COL_LIGHT);
-  lv_label_set_text(lblStatus, "Starter...");
+  lv_label_set_text(lblStatus, BSB_TXT_BOOTING);
   lv_obj_align(lblStatus, LV_ALIGN_CENTER, 0, 0);
 
   set_reading_mode(false);
@@ -228,8 +229,8 @@ static void render_reading(const ViewModel &vm) {
   // Footer: delta · age (on the same row as the unit, right-aligned)
   char ageStr[20] = {0};
   if (vm.ageValid) {
-    if (vm.ageMin <= 0) strcpy(ageStr, "nå");
-    else                snprintf(ageStr, sizeof(ageStr), "%d min siden", vm.ageMin);
+    if (vm.ageMin <= 0) strcpy(ageStr, BSB_TXT_NOW);
+    else                snprintf(ageStr, sizeof(ageStr), BSB_TXT_AGE_MIN, vm.ageMin);
   }
   char delta[12] = {0};
   if (vm.haveDelta) snprintf(delta, sizeof(delta), "%+.1f", vm.deltaMmol);

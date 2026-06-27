@@ -10,21 +10,9 @@ ESP32 screens can be added too. See [Supported boards](#supported-boards).
 > ⚠️ **Not a medical device.** It's for convenience only. Never make treatment
 > decisions from it; always check your CGM/receiver or a meter.
 
-```
- +----------------------------------------------------+
- | ingen nett                                14:32    |  ← offline warning · clock
- |                                                    |
- |  7.8  ↗                                            |  ← big colour-coded value + trend
- |  mmol/L                         +0.3 · 3 min siden |  ← unit · delta · how long ago
- |  - - - - - - - - - - - - - - - - - - - - - - - - - |  ← high target
- |          ___                                       |
- |   __/\__/   \____/\___                             |  ← recent readings
- |  - - - - - - - - - - - - - - - - - - - - - - - - - |  ← low target
- +----------------------------------------------------+
-```
-
-The clock shows up once the time syncs, and `ingen nett` only appears if the
-connection's been down for a while. If a reading gets too old, the value fades out.
+<p align="center">
+  <img src="docs/bs-buddy.jpg" alt="BS-Buddy showing a glucose reading on the Guition JC3248W535" width="640">
+</p>
 
 ## What it shows
 
@@ -38,19 +26,8 @@ connection's been down for a while. If a reading gets too old, the value fades o
 It also fades the value when a reading goes stale, reconnects WiFi on its own, and
 uses polled touch so it doesn't depend on a flaky interrupt pin.
 
-## Hardware (reference board)
-
-| | |
-|---|---|
-| Board | **Guition JC3248W535** (a.k.a. JC3248W535C / JC3248W535EN) |
-| MCU | ESP32-S3-WROOM-1 **N16R8** (16 MB flash, 8 MB **octal** PSRAM) |
-| Display | **AXS15231B** over QSPI, 320×480 IPS |
-| Touch | AXS15231B capacitive, I²C `0x3B` |
-| Power | USB-C (data cable; see flashing notes) |
-
-No wiring required; it's an all-in-one module. Full pin map and sources are in
-[`docs/HARDWARE.md`](docs/HARDWARE.md). Other boards document their own hardware in
-`src/board/<board>/README.md`; to add one, see [`docs/ADDING_A_BOARD.md`](docs/ADDING_A_BOARD.md).
+The on-screen text is **Norwegian** by default (`nå`, `min siden`, `ingen nett`) and
+lives in one file — easy to change; see [Configuration](#configuration).
 
 ## Quick start
 
@@ -86,6 +63,9 @@ serial-permission setup are in [`docs/FLASHING.md`](docs/FLASHING.md).
   interval, stale timeout, brightness levels, sparkline length, timezone.
 - **Board geometry** (resolution/rotation/pins) → the active board's header,
   e.g. [`src/board/jc3248w535/pins.h`](src/board/jc3248w535/pins.h).
+- **On-screen text** → [`src/core/strings.h`](src/core/strings.h): every word the
+  display shows. **Norwegian by default** (`nå`, `min siden`, `ingen nett`, …) —
+  change it to whatever language you like.
 
 Default glucose thresholds (mmol/L): urgent-low `3.0`, low `3.9`, high `10.0`,
 urgent-high `13.3`. Edit `src/core/config.h` to taste.
@@ -95,6 +75,9 @@ urgent-high `13.3`. Edit `src/core/config.h` to taste.
 | Board | Display / Touch | Tested? |
 |---|---|---|
 | **Guition JC3248W535** | 3.5″ 320×480, AXS15231B QSPI + touch | ✅ yes, it's the one I have |
+
+The reference board is an all-in-one module — no wiring, just USB-C. Full pin map
+and specs (MCU, PSRAM, touch) are in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 Got a different ESP32 screen? Adding it is mostly self-contained: a new
 `src/board/<name>/` folder plus a build env, with no changes to the rest. The
@@ -117,6 +100,7 @@ src/
     glucose.h            units, zones, trend mapping
     viewmodel.h          backend → view contract
     config.h             app settings (thresholds, timing, brightness, …)
+    strings.h            on-screen text (Norwegian by default; translate here)
   view/                  LVGL presentation (reads a ViewModel)
     ui.cpp               screen (value / arrow / delta / age / sparkline)
     fonts/               pre-generated LVGL fonts (.c)
@@ -127,16 +111,6 @@ src/
 scripts/gen_fonts.sh     regenerate the fonts (needs Node + the .otf/.ttf)
 docs/                    HARDWARE / FLASHING / NIGHTSCOUT / ADDING_A_BOARD
 ```
-
-## Why this stack
-
-Short version: this screen talks over QSPI, which the usual Arduino display
-libraries don't handle, so it uses [Arduino_GFX](https://github.com/moononournation/Arduino_GFX)
-+ [LVGL](https://lvgl.io). Handy side effect: Arduino_GFX drives a ton of other
-controllers too, which is what makes adding other boards realistic.
-
-The fiddly hardware details (octal PSRAM, byte order, and friends) live in
-[`docs/HARDWARE.md`](docs/HARDWARE.md) if you ever hit a wall.
 
 ## Credits
 
