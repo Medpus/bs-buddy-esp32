@@ -18,5 +18,8 @@ struct BoardInfo {
   bool        hasTouch; // false -> main() skips registering an LVGL input device
 };
 
+// Optional early board setup. The shared weak implementation is a no-op.
+void hal_board_init();
+
 // Implemented by the active board (src/board/<board>/board.cpp).
 const BoardInfo& hal_board_info();

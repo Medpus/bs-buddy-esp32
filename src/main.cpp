@@ -16,6 +16,8 @@ static void on_tap(lv_event_t *e) {
 void setup() {
   Serial.begin(115200);
   delay(300);
+  hal_board_init();
+
   Serial.println("\n=== BS-Buddy " BSB_VERSION " ===");
 
   if (!hal_display_init()) {
